@@ -1,56 +1,371 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ByeTunes — Apple Music, your way</title>
-  <meta name="description" content="ByeTunes helps you inject music into your iPhone media library with original Apple Music metadata, animated covers, lyrics and queue control." />
-  <link rel="icon" href="assets/app-icon.jpeg" />
-  <style>
-    :root{
-      --bg:#0b0b0e; --panel:#111116; --panel2:#17171c; --line:rgba(255,255,255,.105);
-      --text:#f7f7f8; --muted:rgba(247,247,248,.67); --soft:rgba(247,247,248,.43);
-      --pink:#ef2b72; --pink2:#ff4fa3; --yellow:#f5cf54; --max:1180px;
-      --shadow:0 30px 90px rgba(0,0,0,.48);
-    }
-    *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;overflow-x:hidden}
-    a{text-decoration:none;color:inherit} img{max-width:100%;display:block} button{font:inherit}
-    body:before{content:"";position:fixed;inset:0;z-index:-3;background:
-      radial-gradient(650px 360px at 12% 18%, rgba(239,43,114,.14), transparent 65%),
-      radial-gradient(520px 320px at 82% 24%, rgba(239,43,114,.10), transparent 62%),
-      linear-gradient(180deg,#0a0a0d,#111116 52%,#09090b);}
-    body:after{content:"";position:fixed;inset:0;z-index:-2;opacity:.33;background-image:linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);background-size:96px 96px;mask-image:linear-gradient(to bottom,transparent,black 14%,black 75%,transparent)}
-    .noise{position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.045;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E")}
-    .wave{position:absolute;left:0;right:0;top:250px;height:330px;pointer-events:none;opacity:.42;background:repeating-radial-gradient(ellipse at 70% 50%, transparent 0 18px, rgba(239,43,114,.18) 19px 20px, transparent 21px 38px);filter:blur(.2px);transform:skewY(-7deg);mask-image:linear-gradient(90deg,transparent,black 18%,black 78%,transparent)}
-    .nav{position:sticky;top:0;z-index:30;background:rgba(11,11,14,.68);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.06)}
-    .nav-inner{max-width:var(--max);margin:auto;padding:22px;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{display:flex;align-items:center;gap:12px;font-size:22px;font-weight:850;letter-spacing:-.04em}.brand img{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);box-shadow:0 10px 36px rgba(239,43,114,.16)}.links{display:flex;gap:28px;color:var(--soft);font-size:14px}.links a:hover{color:#fff}.discord-top{display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(239,43,114,.45);padding:10px 14px;border-radius:14px;color:#fff;background:rgba(239,43,114,.06)}
-    .section{max-width:var(--max);margin:auto;padding:94px 22px}.hero{position:relative;display:grid;grid-template-columns:.92fr 1.08fr;align-items:center;gap:40px;min-height:calc(100vh - 84px);padding-top:58px}.eyebrow{display:inline-flex;align-items:center;gap:9px;color:var(--muted);background:rgba(255,255,255,.055);border:1px solid var(--line);padding:8px 13px;border-radius:999px}.bolt{color:var(--pink2);font-weight:900}h1{font-size:clamp(58px,7.2vw,104px);line-height:.92;letter-spacing:-.078em;margin:24px 0 0}.grad{background:linear-gradient(90deg,var(--pink2),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}.lead{font-size:19px;line-height:1.72;color:var(--muted);max-width:560px;margin:24px 0 0}.lead .hot{color:#fff}.lead .pink{color:#ff79ae}.lead .yellow{color:var(--yellow)}.actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:32px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border-radius:16px;padding:14px 20px;border:1px solid var(--line);font-weight:760;transition:.24s ease;cursor:pointer}.btn:hover{transform:translateY(-2px)}.primary{background:var(--pink);border-color:rgba(255,255,255,.02);color:#fff;box-shadow:0 18px 60px rgba(239,43,114,.25)}.ghost{background:rgba(255,255,255,.052);color:#fff}.chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px;color:var(--muted);font-size:14px}.chip{display:inline-flex;align-items:center;gap:8px}.chip i{width:7px;height:7px;border-radius:99px;background:var(--pink2);box-shadow:0 0 16px rgba(255,79,163,.58)}
-    .phones{position:relative;min-height:650px;display:flex;align-items:center;justify-content:center}.phones:before{content:"";position:absolute;width:560px;height:320px;border-radius:50%;background:rgba(239,43,114,.15);filter:blur(70px);transform:rotate(-10deg)}
-    .iphone{position:relative;width:295px;aspect-ratio:390/844;border-radius:54px;padding:12px;background:linear-gradient(145deg,#34343a,#050507 38%,#222227);box-shadow:inset 0 0 0 1px rgba(255,255,255,.18), inset 0 -18px 35px rgba(255,255,255,.04), var(--shadow);transition:transform .55s cubic-bezier(.22,1,.36,1);flex:0 0 auto}.iphone:hover{transform:translateY(-7px) rotate(0deg) scale(1.015)!important}.screen{height:100%;border-radius:44px;overflow:hidden;background:#050506;position:relative}.screen img{width:100%;height:100%;object-fit:cover}.phone-a{transform:rotate(-2deg) translateX(28px);z-index:2}.phone-b{transform:rotate(6deg) translate(-20px,32px) scale(.93);z-index:1}.phone-b .screen img{filter:brightness(.84)}
-    .title-row{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:30px}.kicker{text-transform:uppercase;letter-spacing:.26em;color:var(--soft);font-size:12px;font-weight:830}.h2{font-size:clamp(38px,5vw,66px);line-height:.96;letter-spacing:-.06em;margin:10px 0 0}.sub{max-width:480px;color:var(--muted);line-height:1.7}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.card{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.025));border-radius:26px;padding:24px;min-height:205px;box-shadow:0 20px 60px rgba(0,0,0,.20);transition:.24s ease}.card:hover{transform:translateY(-5px);border-color:rgba(255,79,163,.35)}.mark{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;background:rgba(239,43,114,.14);color:#ff79ae;margin-bottom:24px}.mark.yellow{background:rgba(245,207,84,.10);color:var(--yellow)}.card h3{margin:0;font-size:20px;letter-spacing:-.03em}.card p{margin:11px 0 0;color:var(--muted);line-height:1.6;font-size:15px}
-    .showcase{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:center}.panel{border:1px solid var(--line);background:rgba(255,255,255,.042);border-radius:34px;padding:30px;overflow:hidden}.device-row{min-height:540px;display:flex;align-items:center;justify-content:center}.device-row .iphone{width:250px}.device-row .iphone:nth-child(1){transform:rotate(-6deg) translateX(18px)}.device-row .iphone:nth-child(2){transform:rotate(5deg) translate(0,34px) scale(.9)}.copy h3{margin:0;font-size:36px;line-height:1.05;letter-spacing:-.05em}.copy p{color:var(--muted);font-size:18px;line-height:1.7}.list{display:grid;gap:14px;margin-top:22px}.list div{display:grid;grid-template-columns:12px 1fr;gap:12px;color:var(--muted)}.list i{width:8px;height:8px;border-radius:50%;background:var(--pink2);margin-top:8px}.list b{color:#fff}.list .y i{background:var(--yellow)}
-    .proof{display:grid;grid-template-columns:1fr 1fr;gap:18px}.quote,.discord-card{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.024));border-radius:28px;padding:24px}.discord-card{display:grid;grid-template-columns:60px 1fr auto;align-items:center;gap:18px}.discord-card img{width:60px;height:60px;border-radius:18px}.discord-card h3,.quote h3{margin:0 0 6px}.discord-card p,.quote p{margin:0;color:var(--muted)}
-    footer{max-width:var(--max);margin:auto;padding:22px 22px 52px;color:var(--soft);display:flex;justify-content:space-between;gap:20px;border-top:1px solid var(--line)}
-    .sf{width:18px;height:18px;display:inline-block;vertical-align:-3px;stroke:currentColor;fill:none;stroke-width:2.25;stroke-linecap:round;stroke-linejoin:round}.sf-fill{fill:currentColor;stroke:none}.brand .sf-logo{width:22px;height:22px}.btn .sf{width:17px;height:17px}.mark .sf{width:22px;height:22px}.chip .sf{width:15px;height:15px;color:var(--pink2)}.discord-top .sf,.discord-card .sf{color:var(--pink2)}.reveal{opacity:0;transform:translateY(24px);transition:opacity .75s ease, transform .75s cubic-bezier(.22,1,.36,1)}.reveal.visible{opacity:1;transform:none}
-    @media (max-width:980px){.links{display:none}.hero{grid-template-columns:1fr;min-height:auto}.phones{min-height:610px}.cards{grid-template-columns:1fr 1fr}.showcase,.proof{grid-template-columns:1fr}.title-row{display:block}.discord-card{grid-template-columns:52px 1fr}.discord-card .btn{grid-column:1/-1}.phone-b{display:none}.phone-a{transform:rotate(0);}.section{padding:78px 18px}h1{font-size:62px}.lead{font-size:18px}.actions .btn{width:100%}.device-row .iphone:nth-child(2){display:none}footer{flex-direction:column}.nav-inner{padding:16px 18px}.discord-top{display:none}}
-    @media (max-width:560px){.cards{grid-template-columns:1fr}.iphone{width:280px}.device-row .iphone{width:235px}.phones{min-height:560px}.h2{font-size:42px}.copy h3{font-size:32px}}
-    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal,.iphone,.btn{transition:none}}
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ByeTunes — Your Apple Music. Your Way.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#141416;
+  --bg2:#1d1d21;
+  --card:rgba(255,255,255,.045);
+  --line:rgba(255,255,255,.08);
+  --text:#ffffff;
+  --muted:rgba(255,255,255,.68);
+  --soft:rgba(255,255,255,.42);
+  --pink:#ff3b8d;
+  --pink2:#ff5ca8;
+  --yellow:#ffd95a;
+  --max:1240px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Inter,system-ui,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255,59,141,.10), transparent 35%),
+    radial-gradient(circle at 85% 15%, rgba(255,217,90,.05), transparent 30%),
+    linear-gradient(180deg, #17171a, #0f1012 60%, #111214);
+}
+body::before{
+  content:"";
+  position:fixed; inset:0; pointer-events:none;
+  background:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(circle at center, black 35%, transparent 90%);
+}
+a{color:inherit;text-decoration:none}
+.container{max-width:var(--max);margin:auto;padding:0 24px}
+nav{
+  position:sticky; top:0; z-index:100;
+  backdrop-filter:blur(20px);
+  background:rgba(15,16,18,.65);
+  border-bottom:1px solid var(--line);
+}
+.nav-inner{display:flex;justify-content:space-between;align-items:center;padding:18px 0}
+.brand{display:flex;align-items:center;gap:14px;font-weight:800;font-size:30px;letter-spacing:-.04em}
+.brand img{width:42px;height:42px;border-radius:12px;box-shadow:0 12px 30px rgba(255,59,141,.22)}
+.nav-links{display:flex;gap:34px;color:var(--soft);font-size:14px}
+.nav-links a:hover{color:#fff}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:14px 24px;border-radius:18px;font-weight:700;
+  border:1px solid var(--line);transition:.35s cubic-bezier(.22,1,.36,1);
+}
+.btn:hover{transform:translateY(-3px) scale(1.01)}
+.btn.primary{
+  background:linear-gradient(135deg,var(--pink),var(--pink2));
+  border:none; box-shadow:0 24px 70px rgba(255,59,141,.24);
+}
+.btn.ghost{background:rgba(255,255,255,.04)}
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:70px;align-items:center;padding:84px 0 110px}
+.badge{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:8px 14px;border-radius:999px;border:1px solid var(--line);
+  background:rgba(255,255,255,.035); color:var(--muted); font-size:14px;
+}
+.badge .spark{color:var(--pink)}
+h1{
+  margin:24px 0 0;
+  font-size:clamp(62px,8vw,118px);
+  line-height:.9; letter-spacing:-.08em;
+}
+.gradient{
+  background:linear-gradient(90deg,#fff 0%, #ffc7de 45%, var(--pink2) 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.lead{
+  margin:28px 0 0; max-width:640px;
+  color:var(--muted); font-size:22px; line-height:1.65;
+}
+.pill-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.pill{
+  padding:10px 14px;border-radius:999px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.03);
+  color:var(--soft); font-size:14px;
+}
+.actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
+.stage{position:relative;min-height:620px;display:grid;place-items:center}
+.glow{
+  position:absolute; width:520px; height:520px; border-radius:50%;
+  background:radial-gradient(circle, rgba(255,59,141,.22), transparent 65%);
+  filter:blur(20px); animation:float 7s ease-in-out infinite;
+}
+.device{
+  position:relative; width:360px; height:720px;
+  border-radius:54px;
+  background:linear-gradient(180deg,#222328,#111215);
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 60px 120px rgba(0,0,0,.5);
+  transform:rotate(4deg);
+  transition:.6s cubic-bezier(.22,1,.36,1);
+}
+.device:hover{transform:rotate(0deg) translateY(-8px)}
+.device::before{
+  content:"";
+  position:absolute; inset:14px;
+  border-radius:42px;
+  background:
+    radial-gradient(circle at top right, rgba(255,59,141,.08), transparent 30%),
+    linear-gradient(180deg, #0d0e10, #0b0c0e);
+  border:1px solid rgba(255,255,255,.05);
+}
+.screen-content{position:absolute; inset:42px; z-index:2}
+.mini-header{display:flex;justify-content:space-between;color:var(--soft);font-size:12px}
+.wire-title{margin-top:28px;font-size:40px;font-weight:800;letter-spacing:-.05em}
+.wire-box,.wire-line{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);
+}
+.wire-box{height:58px;border-radius:18px;margin-top:14px}
+.wire-line{height:10px;border-radius:999px;margin-top:12px}
+.wire-line.short{width:60%}
+.float-note{
+  position:absolute; right:-30px; bottom:80px;
+  width:250px; padding:18px 20px; border-radius:24px;
+  background:rgba(24,24,28,.82); backdrop-filter:blur(18px);
+  border:1px solid var(--line);
+  animation:float 6s ease-in-out infinite reverse;
+}
+.float-note b{display:block;margin-bottom:6px}
+.section{padding:110px 0}
+.section-head{display:flex;justify-content:space-between;gap:40px;align-items:end;margin-bottom:36px}
+.kicker{text-transform:uppercase;letter-spacing:.28em;color:var(--soft);font-size:12px;font-weight:800}
+.h2{font-size:clamp(40px,5vw,72px);letter-spacing:-.06em;line-height:.94;margin:12px 0 0}
+.sub{max-width:520px;color:var(--muted);line-height:1.7}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.card{
+  padding:28px;border-radius:28px;
+  background:var(--card);
+  border:1px solid var(--line);
+  transition:.35s ease;
+}
+.card:hover{transform:translateY(-6px);border-color:rgba(255,59,141,.22)}
+.icon{
+  width:48px;height:48px;border-radius:16px;
+  display:grid;place-items:center;
+  background:rgba(255,59,141,.10); color:#ff91c0;
+  margin-bottom:22px; font-size:22px;
+}
+.card h3{margin:0;font-size:24px;letter-spacing:-.03em}
+.card p{margin:12px 0 0;color:var(--muted);line-height:1.65}
+.changelog{display:grid;gap:14px}
+.log{
+  display:flex;justify-content:space-between;gap:16px;
+  padding:18px 22px;border-radius:20px;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--line);
+}
+.faq details{
+  padding:20px 24px;
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:rgba(255,255,255,.03);
+}
+.faq details+details{margin-top:12px}
+.faq summary{cursor:pointer;font-weight:600}
+.faq p{color:var(--muted);line-height:1.7}
+.cta{
+  display:grid;grid-template-columns:auto 1fr auto;
+  gap:24px;align-items:center;
+  padding:34px;
+  border-radius:38px;
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.09);
+}
+.cta img{width:88px;height:88px;border-radius:24px}
+.discord{
+  display:inline-flex;align-items:center;gap:12px;
+  padding:12px 14px;border-radius:18px;
+  border:1px solid var(--line);background:rgba(255,255,255,.035);
+}
+.discord img{width:38px;height:38px;border-radius:12px}
+footer{
+  padding:32px 0 60px;
+  color:var(--soft);
+  display:flex;justify-content:space-between;gap:20px;
+  border-top:1px solid var(--line);
+}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,1,.36,1)}
+.reveal.visible{opacity:1;transform:none}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@media (max-width: 980px){
+  .nav-links{display:none}
+  .hero,.grid,.cta,.section-head{grid-template-columns:1fr;display:block}
+  .hero{padding:56px 0 90px}
+  .stage{min-height:500px;margin-top:40px}
+  .device{width:290px;height:580px}
+  .float-note{right:-8px;bottom:40px;width:220px}
+  .grid{display:grid;grid-template-columns:1fr}
+  .cta{display:grid}
+  footer{flex-direction:column}
+  h1{font-size:68px}
+  .lead{font-size:19px}
+}
+</style>
 </head>
 <body>
-<div class="noise"></div><div class="wave"></div>
-<nav class="nav"><div class="nav-inner"><a class="brand" href="#"><img src="assets/app-icon.jpeg" alt="ByeTunes icon"><span>ByeTunes</span></a><div class="links"><a href="#features">Features</a><a href="#showcase">How it works</a><a href="#metadata">Metadata</a><a href="#download">Download</a></div><a class="discord-top" href="https://discord.gg/Sca7uW94z"><svg class="sf" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 9.5c2.2-1 4.8-1 7 0M9 16c-2.1-.2-3.8-.8-5-1.8.1-3.1.9-5.5 2.4-7.4 1.4-.7 2.5-.9 3.4-1.1l.7 1.3M15 7l.7-1.3c.9.2 2 .4 3.4 1.1 1.5 1.9 2.3 4.3 2.4 7.4-1.2 1-2.9 1.6-5 1.8l-1-1.5M8.8 13h.1M15.1 13h.1"/></svg> Join Discord</a></div></nav>
-<main>
-<section class="section hero">
-  <div class="reveal"><div class="eyebrow"><span class="bolt"><svg class="sf" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 5 13h6l-1 9 9-13h-6z"/></svg></span> For Apple Music, made cleaner.</div><h1>Your Apple Music.<br>Your <span class="grad">way.</span></h1><p class="lead">ByeTunes helps you inject music into your iPhone library with <span class="pink">animated covers</span>, <span class="yellow">original Apple Music metadata</span>, lyrics, queue control, and no ugly sync flow.</p><div class="actions"><a class="btn primary" href="#download">Download ByeTunes <svg class="sf" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg></a><a class="btn ghost" href="https://github.com/EduAlexxis/ByeTunes"><svg class="sf" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-4 1.2-4-2-5-2.5M15 22v-3.4c.1-1-.3-1.7-.8-2.1 2.8-.3 5.8-1.4 5.8-6.2A4.8 4.8 0 0 0 18.7 7c.1-.3.6-1.7-.1-3.3 0 0-1.1-.3-3.6 1.3a12.4 12.4 0 0 0-6 0C6.5 3.4 5.4 3.7 5.4 3.7 4.7 5.3 5.2 6.7 5.3 7A4.8 4.8 0 0 0 4 10.3c0 4.8 3 5.9 5.8 6.2-.4.3-.7.8-.8 1.5V22"/></svg> View on GitHub</a></div><div class="chips"><span class="chip"><svg class="sf" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>No quality loss</span><span class="chip"><svg class="sf" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>Original metadata</span><span class="chip"><svg class="sf" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.7 5.2L19 10l-5.3 1.8L12 17l-1.7-5.2L5 10l5.3-1.8zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>Animated covers</span><span class="chip"><svg class="sf sf-logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18.5a3 3 0 1 1-2-2.83V6.5l10-2v10.2a3 3 0 1 1-2-2.83V8.2l-6 1.2z" class="sf-fill"/></svg>Lyrics support</span></div></div>
-  <div class="phones reveal"><div class="iphone phone-a"><div class="screen"><img src="assets/screen-main.png" alt="ByeTunes Music screen"></div></div><div class="iphone phone-b"><div class="screen"><img src="assets/screen-album.png" alt="Album download screen"></div></div></div>
+<nav>
+  <div class="container nav-inner">
+    <div class="brand"><img src="assets/app-icon.png" alt=""> ByeTunes</div>
+    <div class="nav-links">
+      <a href="#formats">Formats</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#releases">Releases</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <a class="discord" href="https://discord.gg/Sca7uW94z" target="_blank">
+      <img src="assets/discord.png" alt="">
+      <span>Discord</span>
+    </a>
+  </div>
+</nav>
+
+<header class="container hero">
+  <div>
+    <div class="badge"><span class="spark">✦</span> For Apple Music, made better.</div>
+    <h1>Your Apple Music.<br><span class="gradient">Your way.</span></h1>
+    <p class="lead">
+      Inject music directly into the native Apple Music library with animated covers,
+      original metadata, lyrics support, and zero quality loss.
+    </p>
+    <div class="actions">
+      <a class="btn primary" href="#">Download IPA</a>
+      <a class="btn ghost" href="#">View on GitHub</a>
+    </div>
+    <div class="pill-row">
+      <span class="pill">MP3</span>
+      <span class="pill">M4A</span>
+      <span class="pill">FLAC</span>
+      <span class="pill">WAV</span>
+      <span class="pill">ALAC</span>
+      <span class="pill">Lyrics Support</span>
+      <span class="pill">Queue Manager</span>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="glow"></div>
+    <div class="device">
+      <div class="screen-content">
+        <div class="mini-header"><span>Music</span><span>Connected</span></div>
+        <div class="wire-title">Library</div>
+        <div class="wire-box"></div>
+        <div class="wire-line"></div>
+        <div class="wire-line short"></div>
+        <div class="wire-box"></div>
+        <div class="wire-box"></div>
+        <div class="wire-box"></div>
+      </div>
+    </div>
+    <div class="float-note">
+      <b>Original Apple Music metadata</b>
+      <div style="color:var(--muted);font-size:14px;line-height:1.55">
+        Titles, artists, artwork, lyrics, explicit flags and animated covers preserved.
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="formats" class="section container reveal">
+  <div class="section-head">
+    <div>
+      <div class="kicker">Compatibility</div>
+      <h2 class="h2">Everything your library needs.</h2>
+    </div>
+    <p class="sub">Lossless formats, rich metadata and native Apple Music integration with no re-encoding.</p>
+  </div>
+  <div class="grid">
+    <div class="card"><div class="icon">♫</div><h3>Lossless Formats</h3><p>MP3, M4A, FLAC, WAV and ALAC with no quality compromise.</p></div>
+    <div class="card"><div class="icon">✦</div><h3>Animated Covers</h3><p>Bring albums to life with moving artwork in Apple Music.</p></div>
+    <div class="card"><div class="icon">≣</div><h3>Original Metadata</h3><p>Titles, artists, albums, explicit tags and artwork are retained.</p></div>
+    <div class="card"><div class="icon">⇅</div><h3>Queue Manager</h3><p>Batch downloads with progress tracking and smart ordering.</p></div>
+  </div>
 </section>
-<section class="section" id="features"><div class="title-row reveal"><div><div class="kicker">Features</div><h2 class="h2">Small app.<br>Serious library control.</h2></div><p class="sub">Focused tools for people who want Apple Music to behave like a real personal library again.</p></div><div class="cards"><article class="card reveal"><div class="mark"><svg class="sf" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.7 5.2L19 10l-5.3 1.8L12 17l-1.7-5.2L5 10l5.3-1.8zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg></div><h3>Animated Covers</h3><p>Keep rich album artwork and motion-ready covers instead of flat placeholders.</p></article><article class="card reveal"><div class="mark yellow"><svg class="sf" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></div><h3>Original Metadata</h3><p>Preserves names, artists, albums, explicit tags and Apple Music-style details.</p></article><article class="card reveal"><div class="mark"><svg class="sf" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 21 12l-9 9-9-9z"/></svg></div><h3>Queue Manager</h3><p>Add, edit and inject tracks cleanly with visible progress and status.</p></article><article class="card reveal"><div class="mark"><svg class="sf" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 5 13h6l-1 9 9-13h-6z"/></svg></div><h3>Native Feel</h3><p>Built around the iOS library experience, not a separate fake music player.</p></article></div></section>
-<section class="section showcase" id="showcase"><div class="panel device-row reveal"><div class="iphone"><div class="screen"><img src="assets/screen-lock.jpeg" alt="iOS lock screen playback"></div></div><div class="iphone"><div class="screen"><img src="assets/screen-lyrics.jpeg" alt="Lyrics screen"></div></div></div><div class="copy reveal" id="metadata"><div class="kicker">Metadata</div><h3>Looks native because the details are native.</h3><p>Injected songs can show in Apple Music with real artwork, playback controls, lyrics support and properly structured metadata.</p><div class="list"><div><i></i><span><b>Original Apple Music metadata</b><br>Titles, artists, album fields, explicit markers and artwork stay organised.</span></div><div class="y"><i></i><span><b>Animated covers</b><br>A cleaner library experience with cover art that feels alive.</span></div><div><i></i><span><b>Less visual noise</b><br>The interface is intentionally minimal: fewer screenshots, stronger hierarchy, cleaner device framing.</span></div></div></div></section>
-<section class="section proof" id="download"><div class="discord-card reveal"><img src="assets/discord-pfp.png" alt="Discord server icon"><div><h3>Join the Discord</h3><p>Get updates, help, testing notes and release announcements.</p></div><a class="btn ghost" href="https://discord.gg/Sca7uW94z"><svg class="sf" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 9.5c2.2-1 4.8-1 7 0M9 16c-2.1-.2-3.8-.8-5-1.8.1-3.1.9-5.5 2.4-7.4 1.4-.7 2.5-.9 3.4-1.1l.7 1.3M15 7l.7-1.3c.9.2 2 .4 3.4 1.1 1.5 1.9 2.3 4.3 2.4 7.4-1.2 1-2.9 1.6-5 1.8l-1-1.5M8.8 13h.1M15.1 13h.1"/></svg> Open Discord</a></div><div class="quote reveal"><h3>Download ByeTunes</h3><p>For users who want Apple Music library control without going back to iTunes sync.</p><div class="actions"><a class="btn primary" href="https://github.com/EduAlexxis/ByeTunes"><svg class="sf" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg> Download IPA</a><a class="btn ghost" href="https://github.com/EduAlexxis/ByeTunes"><svg class="sf" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-4 1.2-4-2-5-2.5M15 22v-3.4c.1-1-.3-1.7-.8-2.1 2.8-.3 5.8-1.4 5.8-6.2A4.8 4.8 0 0 0 18.7 7c.1-.3.6-1.7-.1-3.3 0 0-1.1-.3-3.6 1.3a12.4 12.4 0 0 0-6 0C6.5 3.4 5.4 3.7 5.4 3.7 4.7 5.3 5.2 6.7 5.3 7A4.8 4.8 0 0 0 4 10.3c0 4.8 3 5.9 5.8 6.2-.4.3-.7.8-.8 1.5V22"/></svg> GitHub</a></div></div></section>
-</main><footer><div>ByeTunes — Idea and design by Zephyrax. Developed by EduAlexxis.</div><div>Apple Music, but less annoying.</div></footer>
+
+<section id="privacy" class="section container reveal">
+  <div class="section-head">
+    <div>
+      <div class="kicker">Local-first</div>
+      <h2 class="h2">Your library stays yours.</h2>
+    </div>
+    <p class="sub">No accounts, no subscriptions, no cloud upload. Your music is processed directly on your device.</p>
+  </div>
+</section>
+
+<section id="releases" class="section container reveal">
+  <div class="section-head">
+    <div>
+      <div class="kicker">Release Notes</div>
+      <h2 class="h2">Active and evolving.</h2>
+    </div>
+    <p class="sub">Recent improvements and feature additions that make the project feel alive.</p>
+  </div>
+  <div class="changelog">
+    <div class="log"><strong>v2.4</strong><span style="color:var(--muted)">Animated cover support and improved metadata matching.</span></div>
+    <div class="log"><strong>v2.3</strong><span style="color:var(--muted)">Queue manager redesign and faster batch injection.</span></div>
+    <div class="log"><strong>v2.2</strong><span style="color:var(--muted)">Expanded FLAC and ALAC compatibility.</span></div>
+  </div>
+</section>
+
+<section id="faq" class="section container reveal">
+  <div class="section-head">
+    <div>
+      <div class="kicker">FAQ</div>
+      <h2 class="h2">Common questions.</h2>
+    </div>
+  </div>
+  <div class="faq">
+    <details open>
+      <summary>Do I need a computer every time?</summary>
+      <p>No. After the initial pairing process, you can manage and inject music directly from your iPhone.</p>
+    </details>
+    <details>
+      <summary>Does ByeTunes preserve Apple Music metadata?</summary>
+      <p>Yes. Artwork, lyrics, explicit flags, artist and album data are retained and displayed natively.</p>
+    </details>
+    <details>
+      <summary>Which formats are supported?</summary>
+      <p>MP3, M4A, FLAC, WAV and ALAC are supported, including lossless audio workflows.</p>
+    </details>
+  </div>
+</section>
+
+<section class="section container reveal">
+  <div class="cta">
+    <img src="assets/app-icon.png" alt="">
+    <div>
+      <h2 style="margin:0;font-size:42px;letter-spacing:-.05em">Take control of your music library.</h2>
+      <p style="margin:10px 0 0;color:var(--muted)">Open source, native, and built for people who want full ownership of their Apple Music experience.</p>
+    </div>
+    <a class="btn primary" href="#">Download Now</a>
+  </div>
+</section>
+
+<div class="container">
+  <footer>
+    <div>ByeTunes — Native Apple Music injection.</div>
+    <div>Designed to feel simple, fast and genuinely crafted.</div>
+  </footer>
+</div>
+
 <script>
-const io=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:.12});document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-let y=0,ty=0;function raf(){y+=(ty-y)*.08;document.documentElement.style.setProperty('--scrollY',y);requestAnimationFrame(raf)};raf();window.addEventListener('scroll',()=>{ty=scrollY},{passive:true});
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting) entry.target.classList.add('visible');
+  });
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
 </script>
-</body></html>
+</body>
+</html>
