@@ -1,371 +1,756 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ByeTunes — Your Apple Music. Your Way.</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg:#141416;
-  --bg2:#1d1d21;
-  --card:rgba(255,255,255,.045);
-  --line:rgba(255,255,255,.08);
-  --text:#ffffff;
-  --muted:rgba(255,255,255,.68);
-  --soft:rgba(255,255,255,.42);
-  --pink:#ff3b8d;
-  --pink2:#ff5ca8;
-  --yellow:#ffd95a;
-  --max:1240px;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;
-  font-family:Inter,system-ui,sans-serif;
-  color:var(--text);
-  background:
-    radial-gradient(circle at 15% 20%, rgba(255,59,141,.10), transparent 35%),
-    radial-gradient(circle at 85% 15%, rgba(255,217,90,.05), transparent 30%),
-    linear-gradient(180deg, #17171a, #0f1012 60%, #111214);
-}
-body::before{
-  content:"";
-  position:fixed; inset:0; pointer-events:none;
-  background:
-    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
-  background-size: 56px 56px;
-  mask-image: radial-gradient(circle at center, black 35%, transparent 90%);
-}
-a{color:inherit;text-decoration:none}
-.container{max-width:var(--max);margin:auto;padding:0 24px}
-nav{
-  position:sticky; top:0; z-index:100;
-  backdrop-filter:blur(20px);
-  background:rgba(15,16,18,.65);
-  border-bottom:1px solid var(--line);
-}
-.nav-inner{display:flex;justify-content:space-between;align-items:center;padding:18px 0}
-.brand{display:flex;align-items:center;gap:14px;font-weight:800;font-size:30px;letter-spacing:-.04em}
-.brand img{width:42px;height:42px;border-radius:12px;box-shadow:0 12px 30px rgba(255,59,141,.22)}
-.nav-links{display:flex;gap:34px;color:var(--soft);font-size:14px}
-.nav-links a:hover{color:#fff}
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:10px;
-  padding:14px 24px;border-radius:18px;font-weight:700;
-  border:1px solid var(--line);transition:.35s cubic-bezier(.22,1,.36,1);
-}
-.btn:hover{transform:translateY(-3px) scale(1.01)}
-.btn.primary{
-  background:linear-gradient(135deg,var(--pink),var(--pink2));
-  border:none; box-shadow:0 24px 70px rgba(255,59,141,.24);
-}
-.btn.ghost{background:rgba(255,255,255,.04)}
-.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:70px;align-items:center;padding:84px 0 110px}
-.badge{
-  display:inline-flex;align-items:center;gap:10px;
-  padding:8px 14px;border-radius:999px;border:1px solid var(--line);
-  background:rgba(255,255,255,.035); color:var(--muted); font-size:14px;
-}
-.badge .spark{color:var(--pink)}
-h1{
-  margin:24px 0 0;
-  font-size:clamp(62px,8vw,118px);
-  line-height:.9; letter-spacing:-.08em;
-}
-.gradient{
-  background:linear-gradient(90deg,#fff 0%, #ffc7de 45%, var(--pink2) 100%);
-  -webkit-background-clip:text; background-clip:text; color:transparent;
-}
-.lead{
-  margin:28px 0 0; max-width:640px;
-  color:var(--muted); font-size:22px; line-height:1.65;
-}
-.pill-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
-.pill{
-  padding:10px 14px;border-radius:999px;
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.03);
-  color:var(--soft); font-size:14px;
-}
-.actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
-.stage{position:relative;min-height:620px;display:grid;place-items:center}
-.glow{
-  position:absolute; width:520px; height:520px; border-radius:50%;
-  background:radial-gradient(circle, rgba(255,59,141,.22), transparent 65%);
-  filter:blur(20px); animation:float 7s ease-in-out infinite;
-}
-.device{
-  position:relative; width:360px; height:720px;
-  border-radius:54px;
-  background:linear-gradient(180deg,#222328,#111215);
-  border:1px solid rgba(255,255,255,.08);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.08),
-    0 60px 120px rgba(0,0,0,.5);
-  transform:rotate(4deg);
-  transition:.6s cubic-bezier(.22,1,.36,1);
-}
-.device:hover{transform:rotate(0deg) translateY(-8px)}
-.device::before{
-  content:"";
-  position:absolute; inset:14px;
-  border-radius:42px;
-  background:
-    radial-gradient(circle at top right, rgba(255,59,141,.08), transparent 30%),
-    linear-gradient(180deg, #0d0e10, #0b0c0e);
-  border:1px solid rgba(255,255,255,.05);
-}
-.screen-content{position:absolute; inset:42px; z-index:2}
-.mini-header{display:flex;justify-content:space-between;color:var(--soft);font-size:12px}
-.wire-title{margin-top:28px;font-size:40px;font-weight:800;letter-spacing:-.05em}
-.wire-box,.wire-line{
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.06);
-}
-.wire-box{height:58px;border-radius:18px;margin-top:14px}
-.wire-line{height:10px;border-radius:999px;margin-top:12px}
-.wire-line.short{width:60%}
-.float-note{
-  position:absolute; right:-30px; bottom:80px;
-  width:250px; padding:18px 20px; border-radius:24px;
-  background:rgba(24,24,28,.82); backdrop-filter:blur(18px);
-  border:1px solid var(--line);
-  animation:float 6s ease-in-out infinite reverse;
-}
-.float-note b{display:block;margin-bottom:6px}
-.section{padding:110px 0}
-.section-head{display:flex;justify-content:space-between;gap:40px;align-items:end;margin-bottom:36px}
-.kicker{text-transform:uppercase;letter-spacing:.28em;color:var(--soft);font-size:12px;font-weight:800}
-.h2{font-size:clamp(40px,5vw,72px);letter-spacing:-.06em;line-height:.94;margin:12px 0 0}
-.sub{max-width:520px;color:var(--muted);line-height:1.7}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-.card{
-  padding:28px;border-radius:28px;
-  background:var(--card);
-  border:1px solid var(--line);
-  transition:.35s ease;
-}
-.card:hover{transform:translateY(-6px);border-color:rgba(255,59,141,.22)}
-.icon{
-  width:48px;height:48px;border-radius:16px;
-  display:grid;place-items:center;
-  background:rgba(255,59,141,.10); color:#ff91c0;
-  margin-bottom:22px; font-size:22px;
-}
-.card h3{margin:0;font-size:24px;letter-spacing:-.03em}
-.card p{margin:12px 0 0;color:var(--muted);line-height:1.65}
-.changelog{display:grid;gap:14px}
-.log{
-  display:flex;justify-content:space-between;gap:16px;
-  padding:18px 22px;border-radius:20px;
-  background:rgba(255,255,255,.03);
-  border:1px solid var(--line);
-}
-.faq details{
-  padding:20px 24px;
-  border:1px solid var(--line);
-  border-radius:20px;
-  background:rgba(255,255,255,.03);
-}
-.faq details+details{margin-top:12px}
-.faq summary{cursor:pointer;font-weight:600}
-.faq p{color:var(--muted);line-height:1.7}
-.cta{
-  display:grid;grid-template-columns:auto 1fr auto;
-  gap:24px;align-items:center;
-  padding:34px;
-  border-radius:38px;
-  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-  border:1px solid rgba(255,255,255,.09);
-}
-.cta img{width:88px;height:88px;border-radius:24px}
-.discord{
-  display:inline-flex;align-items:center;gap:12px;
-  padding:12px 14px;border-radius:18px;
-  border:1px solid var(--line);background:rgba(255,255,255,.035);
-}
-.discord img{width:38px;height:38px;border-radius:12px}
-footer{
-  padding:32px 0 60px;
-  color:var(--soft);
-  display:flex;justify-content:space-between;gap:20px;
-  border-top:1px solid var(--line);
-}
-.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,1,.36,1)}
-.reveal.visible{opacity:1;transform:none}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
-@media (max-width: 980px){
-  .nav-links{display:none}
-  .hero,.grid,.cta,.section-head{grid-template-columns:1fr;display:block}
-  .hero{padding:56px 0 90px}
-  .stage{min-height:500px;margin-top:40px}
-  .device{width:290px;height:580px}
-  .float-note{right:-8px;bottom:40px;width:220px}
-  .grid{display:grid;grid-template-columns:1fr}
-  .cta{display:grid}
-  footer{flex-direction:column}
-  h1{font-size:68px}
-  .lead{font-size:19px}
-}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ByeTunes — Apple Music, without the sync ritual</title>
+  <meta name="description" content="ByeTunes injects music into the native Apple Music library with original metadata, lyrics, animated artwork, and lossless format support." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --ink:#f7f7fb;
+      --muted:#a3a3ad;
+      --dim:#6f707a;
+      --bg:#0b0c0f;
+      --paper:#111216;
+      --paper2:#17181d;
+      --line:rgba(255,255,255,.105);
+      --line2:rgba(255,255,255,.06);
+      --pink:#ff2d73;
+      --pink2:#ff5ca2;
+      --yellow:#f4d35e;
+      --green:#61d394;
+      --shadow:0 40px 120px rgba(0,0,0,.44);
+      --max:1180px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter,-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",system-ui,sans-serif;
+      background:var(--bg);
+      color:var(--ink);
+      overflow-x:hidden;
+      text-rendering:geometricPrecision;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    body:before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 70% 6%, rgba(255,45,115,.16), transparent 33%),
+        radial-gradient(circle at 8% 14%, rgba(255,255,255,.055), transparent 25%),
+        linear-gradient(180deg,#0b0c0f 0%,#0f1014 44%,#090a0c 100%);
+      z-index:-3;
+    }
+
+    body:after{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.34;
+      background:
+        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+      background-size:72px 72px;
+      mask-image:linear-gradient(to bottom,black 0%,black 56%,transparent 100%);
+      z-index:-2;
+    }
+
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+    .wrap{width:min(var(--max),calc(100% - 44px));margin-inline:auto}
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:30;
+      border-bottom:1px solid rgba(255,255,255,.075);
+      background:rgba(11,12,15,.74);
+      backdrop-filter:blur(24px) saturate(150%);
+    }
+    .nav{
+      height:74px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:24px;
+    }
+    .brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:22px;letter-spacing:-.04em}
+    .brand img{width:38px;height:38px;border-radius:11px;box-shadow:0 16px 50px rgba(255,45,115,.22)}
+    .links{display:flex;align-items:center;gap:30px;color:var(--muted);font-size:14px}
+    .links a{transition:color .2s ease}
+    .links a:hover{color:white}
+    .nav-actions{display:flex;gap:10px;align-items:center}
+    .discord-mini{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid rgba(255,45,115,.28);border-radius:999px;color:#ffd8e6;background:rgba(255,45,115,.045)}
+    .discord-mini img{width:22px;height:22px;border-radius:7px}
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-height:48px;
+      padding:0 19px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.045);
+      color:#fff;
+      font-weight:700;
+      letter-spacing:-.01em;
+      transition:transform .22s ease,border-color .22s ease,background .22s ease,box-shadow .22s ease;
+    }
+    .btn:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.075)}
+    .btn.primary{
+      border-color:transparent;
+      background:linear-gradient(135deg,var(--pink),var(--pink2));
+      box-shadow:0 24px 72px rgba(255,45,115,.30);
+    }
+
+    .hero{
+      position:relative;
+      padding:86px 0 84px;
+    }
+    .hero-grid{
+      display:grid;
+      grid-template-columns:.96fr 1.04fr;
+      gap:62px;
+      align-items:center;
+    }
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:9px;
+      padding:8px 12px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      color:#cbcbd3;
+      background:rgba(255,255,255,.045);
+      font-size:14px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.055);
+    }
+    .eyebrow svg{color:var(--pink)}
+    h1{
+      margin:24px 0 0;
+      max-width:760px;
+      font-size:clamp(58px,8vw,104px);
+      line-height:.91;
+      letter-spacing:-.082em;
+      font-weight:900;
+    }
+    .hot{
+      background:linear-gradient(90deg,#fff 0%,#ffc1d8 46%,var(--pink) 100%);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+    .lead{
+      margin:28px 0 0;
+      max-width:600px;
+      color:#b7b7c0;
+      font-size:20px;
+      line-height:1.72;
+      letter-spacing:-.02em;
+    }
+    .lead strong{color:#fff;font-weight:700}
+    .hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
+    .proof{
+      display:flex;
+      flex-wrap:wrap;
+      gap:11px;
+      margin-top:26px;
+    }
+    .proof span{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      color:#c3c3ca;
+      padding:9px 11px;
+      border-radius:999px;
+      border:1px solid var(--line2);
+      background:rgba(255,255,255,.03);
+      font-size:13px;
+    }
+    .proof svg{width:16px;height:16px;color:var(--pink)}
+
+    .hero-visual{
+      position:relative;
+      min-height:620px;
+      display:grid;
+      place-items:center;
+      perspective:1200px;
+    }
+    .orb{
+      position:absolute;
+      width:560px;height:560px;border-radius:50%;
+      background:radial-gradient(circle,rgba(255,45,115,.22),rgba(255,45,115,.055) 43%,transparent 68%);
+      filter:blur(8px);
+      animation:breath 7s ease-in-out infinite;
+    }
+    .ribbon{
+      position:absolute;
+      width:760px;
+      height:220px;
+      background:
+        repeating-linear-gradient(100deg,rgba(255,45,115,.42) 0 1px,transparent 1px 13px);
+      transform:rotate(-13deg) translateY(24px);
+      filter:blur(.1px);
+      opacity:.26;
+      mask-image:linear-gradient(90deg,transparent,black 20%,black 72%,transparent);
+    }
+    .product-card{
+      width:min(100%,620px);
+      border-radius:38px;
+      background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.035));
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,.08);
+      padding:22px;
+      transform:rotateY(-7deg) rotateX(4deg);
+      transition:transform .55s cubic-bezier(.22,1,.36,1);
+      backdrop-filter:blur(18px);
+    }
+    .product-card:hover{transform:rotateY(-2deg) rotateX(1deg) translateY(-8px)}
+    .app-window{
+      border-radius:26px;
+      background:#090a0d;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.075);
+    }
+    .window-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:16px 18px;
+      border-bottom:1px solid rgba(255,255,255,.07);
+      background:rgba(255,255,255,.035);
+    }
+    .traffic{display:flex;gap:7px}
+    .traffic i{display:block;width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.18)}
+    .traffic i:first-child{background:var(--pink)}
+    .window-title{font-size:12px;color:var(--muted);font-weight:700}
+    .app-body{padding:22px}
+    .status-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+    .status-row h3{margin:0;font-size:30px;letter-spacing:-.055em}
+    .live{display:flex;align-items:center;gap:8px;color:#bdffd9;font-size:13px}
+    .live:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 20px var(--green)}
+    .command{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      padding:18px;
+      border-radius:20px;
+      background:linear-gradient(135deg,rgba(255,45,115,.22),rgba(255,255,255,.045));
+      border:1px solid rgba(255,45,115,.18);
+      margin-bottom:16px;
+    }
+    .song-list{display:grid;gap:10px}
+    .song{
+      display:grid;
+      grid-template-columns:46px 1fr auto;
+      gap:13px;
+      align-items:center;
+      padding:11px;
+      border-radius:17px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.055);
+    }
+    .cover{
+      width:46px;height:46px;border-radius:13px;
+      background:
+        radial-gradient(circle at 30% 25%,#ff8bbb,transparent 36%),
+        radial-gradient(circle at 70% 72%,#f4d35e,transparent 38%),
+        linear-gradient(135deg,#3b1729,#15161b);
+    }
+    .song b{display:block;font-size:14px}
+    .song span{display:block;color:var(--dim);font-size:12px;margin-top:3px}
+    .chip{font-size:12px;color:#ffd6e4;background:rgba(255,45,115,.12);border:1px solid rgba(255,45,115,.22);border-radius:999px;padding:6px 9px}
+
+    .section{padding:92px 0}
+    .section-head{
+      display:grid;
+      grid-template-columns:1fr .72fr;
+      gap:30px;
+      align-items:end;
+      margin-bottom:34px;
+    }
+    .kicker{
+      color:var(--pink2);
+      font-weight:800;
+      font-size:12px;
+      letter-spacing:.24em;
+      text-transform:uppercase;
+      margin-bottom:13px;
+    }
+    h2{
+      margin:0;
+      font-size:clamp(38px,5vw,68px);
+      line-height:.96;
+      letter-spacing:-.065em;
+    }
+    .section-head p,.section-copy{
+      color:var(--muted);
+      font-size:17px;
+      line-height:1.7;
+      margin:0;
+    }
+
+    .compat{
+      display:grid;
+      grid-template-columns:1.15fr .85fr;
+      gap:18px;
+    }
+    .panel{
+      background:linear-gradient(180deg,rgba(255,255,255,.062),rgba(255,255,255,.032));
+      border:1px solid var(--line);
+      border-radius:34px;
+      padding:28px;
+      box-shadow:0 20px 70px rgba(0,0,0,.18);
+    }
+    .format-grid{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:10px;
+      margin-top:24px;
+    }
+    .format{
+      min-height:92px;
+      border-radius:22px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.07);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:8px;
+    }
+    .format b{font-size:20px}
+    .format span{font-size:12px;color:var(--dim)}
+    .feature-list{display:grid;gap:12px}
+    .feature-row{
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      padding:15px;
+      border-radius:20px;
+      background:rgba(255,255,255,.035);
+      border:1px solid rgba(255,255,255,.055);
+    }
+    .sf{
+      flex:0 0 auto;
+      width:36px;height:36px;
+      border-radius:12px;
+      display:grid;place-items:center;
+      color:#ff9cc4;
+      background:rgba(255,45,115,.10);
+    }
+    .feature-row b{display:block;margin-bottom:4px}
+    .feature-row span{color:var(--muted);font-size:14px;line-height:1.55}
+
+    .privacy{
+      display:grid;
+      grid-template-columns:.9fr 1.1fr;
+      gap:18px;
+      align-items:stretch;
+    }
+    .big-number{font-size:88px;letter-spacing:-.08em;font-weight:900;color:#fff;margin:0}
+    .privacy .panel:nth-child(2){
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+    .mini-card{
+      padding:20px;
+      border-radius:24px;
+      background:rgba(255,255,255,.035);
+      border:1px solid rgba(255,255,255,.06);
+    }
+    .mini-card b{display:block;margin-bottom:7px}
+    .mini-card span{color:var(--muted);font-size:14px;line-height:1.6}
+
+    .timeline{
+      display:grid;
+      gap:12px;
+    }
+    .release{
+      display:grid;
+      grid-template-columns:92px 1fr auto;
+      gap:18px;
+      align-items:start;
+      padding:20px;
+      border-radius:26px;
+      border:1px solid rgba(255,255,255,.085);
+      background:rgba(255,255,255,.035);
+      transition:transform .25s ease,border-color .25s ease;
+    }
+    .release:hover{transform:translateY(-3px);border-color:rgba(255,45,115,.22)}
+    .version{font-weight:900;letter-spacing:-.04em;color:white}
+    .release h3{margin:0 0 7px;font-size:21px;letter-spacing:-.035em}
+    .release p{margin:0;color:var(--muted);line-height:1.6}
+    .tag{
+      white-space:nowrap;
+      color:#ffd6e4;
+      border:1px solid rgba(255,45,115,.25);
+      background:rgba(255,45,115,.08);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .faq-grid{
+      display:grid;
+      grid-template-columns:.76fr 1.24fr;
+      gap:28px;
+      align-items:start;
+    }
+    details{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.035);
+      border-radius:22px;
+      padding:0 20px;
+    }
+    details+details{margin-top:12px}
+    summary{
+      list-style:none;
+      cursor:pointer;
+      padding:20px 0;
+      font-weight:750;
+      letter-spacing:-.02em;
+    }
+    summary::-webkit-details-marker{display:none}
+    details p{margin:0 0 20px;color:var(--muted);line-height:1.65}
+
+    .final{
+      padding:92px 0 110px;
+    }
+    .cta{
+      display:grid;
+      grid-template-columns:auto 1fr auto;
+      gap:24px;
+      align-items:center;
+      padding:32px;
+      border-radius:36px;
+      background:
+        radial-gradient(circle at 16% 20%,rgba(255,45,115,.18),transparent 32%),
+        linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035));
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:var(--shadow);
+    }
+    .cta img{width:86px;height:86px;border-radius:24px}
+    .cta h2{font-size:38px}
+    .cta p{margin:8px 0 0;color:var(--muted);line-height:1.6}
+
+    footer{
+      border-top:1px solid var(--line);
+      padding:28px 0 56px;
+      color:var(--dim);
+      display:flex;
+      justify-content:space-between;
+      gap:20px;
+      font-size:14px;
+    }
+
+    .sticky-download{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%) translateY(90px);
+      z-index:40;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:10px;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:999px;
+      background:rgba(18,19,23,.78);
+      backdrop-filter:blur(24px) saturate(150%);
+      box-shadow:0 22px 70px rgba(0,0,0,.36);
+      transition:transform .5s cubic-bezier(.22,1,.36,1);
+    }
+    .sticky-download.visible{transform:translateX(-50%) translateY(0)}
+    .sticky-download img{width:34px;height:34px;border-radius:10px}
+    .sticky-download strong{font-size:14px;white-space:nowrap}
+    .sticky-download .btn{min-height:38px;padding:0 14px;font-size:13px}
+
+    .reveal{
+      opacity:0;
+      transform:translateY(28px);
+      transition:opacity .8s ease,transform .8s cubic-bezier(.22,1,.36,1);
+    }
+    .reveal.visible{opacity:1;transform:none}
+    @keyframes breath{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+
+    @media(max-width:980px){
+      .links{display:none}
+      .nav{height:68px}
+      .discord-mini span{display:none}
+      .hero{padding:54px 0 68px}
+      .hero-grid,.section-head,.compat,.privacy,.faq-grid,.cta{grid-template-columns:1fr}
+      .hero-visual{min-height:540px}
+      .product-card{transform:none}
+      .format-grid{grid-template-columns:repeat(2,1fr)}
+      .privacy .panel:nth-child(2){grid-template-columns:1fr}
+      .release{grid-template-columns:1fr}
+      .tag{width:max-content}
+      .cta{display:grid}
+      footer{flex-direction:column}
+      .sticky-download{width:calc(100% - 24px);justify-content:space-between}
+      h1{font-size:64px}
+      .lead{font-size:18px}
+    }
+
+    @media(prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      *,*:before,*:after{animation:none!important;transition:none!important}
+    }
+  </style>
 </head>
 <body>
-<nav>
-  <div class="container nav-inner">
-    <div class="brand"><img src="assets/app-icon.png" alt=""> ByeTunes</div>
-    <div class="nav-links">
-      <a href="#formats">Formats</a>
-      <a href="#privacy">Privacy</a>
-      <a href="#releases">Releases</a>
-      <a href="#faq">FAQ</a>
-    </div>
-    <a class="discord" href="https://discord.gg/Sca7uW94z" target="_blank">
-      <img src="assets/discord.png" alt="">
-      <span>Discord</span>
-    </a>
-  </div>
-</nav>
-
-<header class="container hero">
-  <div>
-    <div class="badge"><span class="spark">✦</span> For Apple Music, made better.</div>
-    <h1>Your Apple Music.<br><span class="gradient">Your way.</span></h1>
-    <p class="lead">
-      Inject music directly into the native Apple Music library with animated covers,
-      original metadata, lyrics support, and zero quality loss.
-    </p>
-    <div class="actions">
-      <a class="btn primary" href="#">Download IPA</a>
-      <a class="btn ghost" href="#">View on GitHub</a>
-    </div>
-    <div class="pill-row">
-      <span class="pill">MP3</span>
-      <span class="pill">M4A</span>
-      <span class="pill">FLAC</span>
-      <span class="pill">WAV</span>
-      <span class="pill">ALAC</span>
-      <span class="pill">Lyrics Support</span>
-      <span class="pill">Queue Manager</span>
-    </div>
-  </div>
-
-  <div class="stage">
-    <div class="glow"></div>
-    <div class="device">
-      <div class="screen-content">
-        <div class="mini-header"><span>Music</span><span>Connected</span></div>
-        <div class="wire-title">Library</div>
-        <div class="wire-box"></div>
-        <div class="wire-line"></div>
-        <div class="wire-line short"></div>
-        <div class="wire-box"></div>
-        <div class="wire-box"></div>
-        <div class="wire-box"></div>
+  <div class="topbar">
+    <div class="wrap nav">
+      <a class="brand" href="#top"><img src="assets/app-icon.png" alt="ByeTunes icon">ByeTunes</a>
+      <div class="links">
+        <a href="#formats">Formats</a>
+        <a href="#local">Local-first</a>
+        <a href="#releases">Releases</a>
+        <a href="#faq">FAQ</a>
       </div>
-    </div>
-    <div class="float-note">
-      <b>Original Apple Music metadata</b>
-      <div style="color:var(--muted);font-size:14px;line-height:1.55">
-        Titles, artists, artwork, lyrics, explicit flags and animated covers preserved.
+      <div class="nav-actions">
+        <a class="discord-mini" href="https://discord.gg/Sca7uW94z" target="_blank" rel="noreferrer">
+          <img src="assets/discord.png" alt=""> <span>Discord</span>
+        </a>
       </div>
     </div>
   </div>
-</header>
 
-<section id="formats" class="section container reveal">
-  <div class="section-head">
-    <div>
-      <div class="kicker">Compatibility</div>
-      <h2 class="h2">Everything your library needs.</h2>
-    </div>
-    <p class="sub">Lossless formats, rich metadata and native Apple Music integration with no re-encoding.</p>
-  </div>
-  <div class="grid">
-    <div class="card"><div class="icon">♫</div><h3>Lossless Formats</h3><p>MP3, M4A, FLAC, WAV and ALAC with no quality compromise.</p></div>
-    <div class="card"><div class="icon">✦</div><h3>Animated Covers</h3><p>Bring albums to life with moving artwork in Apple Music.</p></div>
-    <div class="card"><div class="icon">≣</div><h3>Original Metadata</h3><p>Titles, artists, albums, explicit tags and artwork are retained.</p></div>
-    <div class="card"><div class="icon">⇅</div><h3>Queue Manager</h3><p>Batch downloads with progress tracking and smart ordering.</p></div>
-  </div>
-</section>
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <div class="eyebrow">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M13 2 4 14h7l-1 8 10-13h-7l0-7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+            Native Apple Music injection
+          </div>
+          <h1>Apple Music.<br><span class="hot">Without the sync ritual.</span></h1>
+          <p class="lead">
+            ByeTunes imports music into the native iOS library with <strong>lossless formats</strong>,
+            rich Apple Music metadata, lyrics, animated artwork support, and safer backups.
+          </p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#download">Download ByeTunes</a>
+            <a class="btn" href="#releases">See what changed</a>
+          </div>
+          <div class="proof" aria-label="Key features">
+            <span><svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5v14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Dolby Atmos files</span>
+            <span><svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Album & artist browsing</span>
+            <span><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v18M7 8h10M7 16h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Provider picker</span>
+          </div>
+        </div>
 
-<section id="privacy" class="section container reveal">
-  <div class="section-head">
-    <div>
-      <div class="kicker">Local-first</div>
-      <h2 class="h2">Your library stays yours.</h2>
-    </div>
-    <p class="sub">No accounts, no subscriptions, no cloud upload. Your music is processed directly on your device.</p>
-  </div>
-</section>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="orb"></div>
+          <div class="ribbon"></div>
+          <div class="product-card">
+            <div class="app-window">
+              <div class="window-top">
+                <div class="traffic"><i></i><i></i><i></i></div>
+                <div class="window-title">ByeTunes Music Manager</div>
+                <div style="width:45px"></div>
+              </div>
+              <div class="app-body">
+                <div class="status-row">
+                  <h3>Music</h3>
+                  <div class="live">Connected</div>
+                </div>
+                <div class="command">
+                  <div>
+                    <b>Inject to native library</b>
+                    <div style="color:var(--muted);font-size:13px;margin-top:5px">Metadata, lyrics and artwork included</div>
+                  </div>
+                  <span class="chip">Ready</span>
+                </div>
+                <div class="song-list">
+                  <div class="song"><div class="cover"></div><div><b>Animated Cover Track</b><span>Apple Music metadata matched</span></div><span class="chip">M4A</span></div>
+                  <div class="song"><div class="cover"></div><div><b>Lossless Import</b><span>FLAC parsing improved</span></div><span class="chip">FLAC</span></div>
+                  <div class="song"><div class="cover"></div><div><b>Lyrics Preview</b><span>LRCLIB / Musixmatch / NetEase</span></div><span class="chip">LRC</span></div>
+                  <div class="song"><div class="cover"></div><div><b>Album Queue</b><span>Download selected tracks or full albums</span></div><span class="chip">Queue</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-<section id="releases" class="section container reveal">
-  <div class="section-head">
-    <div>
-      <div class="kicker">Release Notes</div>
-      <h2 class="h2">Active and evolving.</h2>
-    </div>
-    <p class="sub">Recent improvements and feature additions that make the project feel alive.</p>
-  </div>
-  <div class="changelog">
-    <div class="log"><strong>v2.4</strong><span style="color:var(--muted)">Animated cover support and improved metadata matching.</span></div>
-    <div class="log"><strong>v2.3</strong><span style="color:var(--muted)">Queue manager redesign and faster batch injection.</span></div>
-    <div class="log"><strong>v2.2</strong><span style="color:var(--muted)">Expanded FLAC and ALAC compatibility.</span></div>
-  </div>
-</section>
+      </div>
+    </section>
 
-<section id="faq" class="section container reveal">
-  <div class="section-head">
-    <div>
-      <div class="kicker">FAQ</div>
-      <h2 class="h2">Common questions.</h2>
-    </div>
-  </div>
-  <div class="faq">
-    <details open>
-      <summary>Do I need a computer every time?</summary>
-      <p>No. After the initial pairing process, you can manage and inject music directly from your iPhone.</p>
-    </details>
-    <details>
-      <summary>Does ByeTunes preserve Apple Music metadata?</summary>
-      <p>Yes. Artwork, lyrics, explicit flags, artist and album data are retained and displayed natively.</p>
-    </details>
-    <details>
-      <summary>Which formats are supported?</summary>
-      <p>MP3, M4A, FLAC, WAV and ALAC are supported, including lossless audio workflows.</p>
-    </details>
-  </div>
-</section>
+    <section id="formats" class="section reveal">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <div class="kicker">Compatibility</div>
+            <h2>Built for real libraries, not demo files.</h2>
+          </div>
+          <p>Large-library importing, album downloads, better FLAC parsing, Dolby Atmos file support, lyrics sources, and Apple Music artwork colors are part of the actual product direction.</p>
+        </div>
+        <div class="compat">
+          <div class="panel">
+            <h3 style="margin:0;font-size:28px;letter-spacing:-.04em">Audio formats</h3>
+            <p class="section-copy" style="margin-top:10px">Keep the files you already use. ByeTunes focuses on library ownership rather than forcing a new workflow.</p>
+            <div class="format-grid">
+              <div class="format"><b>MP3</b><span>standard</span></div>
+              <div class="format"><b>M4A</b><span>native</span></div>
+              <div class="format"><b>FLAC</b><span>lossless</span></div>
+              <div class="format"><b>WAV</b><span>raw</span></div>
+              <div class="format"><b>ALAC</b><span>Apple</span></div>
+            </div>
+          </div>
+          <div class="panel feature-list">
+            <div class="feature-row">
+              <div class="sf"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M8 18V6l12-2v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="2"/></svg></div>
+              <div><b>Original metadata</b><span>Titles, albums, track numbers, copyright data, artwork, explicit tags and region-aware metadata.</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="sf"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M7 4v6M17 4v6M6 14h12M8 18h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <div><b>Album & artist browsing</b><span>Browse by album and artist instead of hunting for every single track manually.</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="sf"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5v14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <div><b>Animated covers</b><span>Support for richer artwork workflows, including animated cover compatibility.</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<section class="section container reveal">
-  <div class="cta">
+    <section id="local" class="section reveal">
+      <div class="wrap privacy">
+        <div class="panel">
+          <div class="kicker">Local-first</div>
+          <p class="big-number">0</p>
+          <h2 style="font-size:42px">accounts required.</h2>
+          <p class="section-copy" style="margin-top:14px">ByeTunes is designed around local control: your music library, pairing files, backups, logs and downloads stay in your workflow.</p>
+        </div>
+        <div class="panel">
+          <div class="mini-card"><b>Backup and restore</b><span>Snapshot and full backup options help protect against database or external sync issues.</span></div>
+          <div class="mini-card"><b>No cloud upload</b><span>The landing page should sell trust: no forced account system, no “AI cloud” nonsense.</span></div>
+          <div class="mini-card"><b>Manual control</b><span>Downloader server chooser, metadata source, lyrics preferences and store region are configurable.</span></div>
+          <div class="mini-card"><b>Useful logs</b><span>Cleaner logs and export support make troubleshooting less painful.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="releases" class="section reveal">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <div class="kicker">Release notes</div>
+            <h2>Feels maintained because it is.</h2>
+          </div>
+          <p>Instead of fake marketing claims, the page now surfaces real progress from recent releases.</p>
+        </div>
+        <div class="timeline">
+          <article class="release">
+            <div class="version">v2.2</div>
+            <div>
+              <h3>Dolby Atmos files, better FLAC handling and provider picker</h3>
+              <p>Added Dolby Atmos file support, improved FLAC import parsing, album/artist browsing, preview playback, and downloader settings.</p>
+            </div>
+            <span class="tag">Latest</span>
+          </article>
+          <article class="release">
+            <div class="version">v2.1</div>
+            <div>
+              <h3>iOS 26.4 support, artwork colors and full backup</h3>
+              <p>Added RP Pairing support, Apple Music artwork color handling, Fix Artwork, update checker and expanded lyrics sources.</p>
+            </div>
+            <span class="tag">iOS 26.4</span>
+          </article>
+          <article class="release">
+            <div class="version">v2.0</div>
+            <div>
+              <h3>In-app FLAC downloader and major metadata improvements</h3>
+              <p>Introduced full album downloads, automatic Apple Music metadata fetching, Music app process handling, and stronger batch imports.</p>
+            </div>
+            <span class="tag">Big update</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="section reveal">
+      <div class="wrap faq-grid">
+        <div>
+          <div class="kicker">FAQ</div>
+          <h2>Clear answers. No filler.</h2>
+          <p class="section-copy" style="margin-top:16px">This section makes the site feel like a real product page, not a poster.</p>
+        </div>
+        <div>
+          <details open>
+            <summary>Do I need a computer every time?</summary>
+            <p>No. ByeTunes needs pairing setup first, then the day-to-day music management happens on device.</p>
+          </details>
+          <details>
+            <summary>Does it preserve Apple Music metadata?</summary>
+            <p>Yes. ByeTunes focuses on better Apple Music metadata fetching, including artwork, track numbers, album information, lyrics and related fields.</p>
+          </details>
+          <details>
+            <summary>What changed for iOS 26.4?</summary>
+            <p>iOS 26.4 requires RP Pairing for this path. ByeTunes added support for that flow, plus new artwork database and color handling for Apple Music views.</p>
+          </details>
+          <details>
+            <summary>Can I back up my library?</summary>
+            <p>Yes. Recent versions include snapshot backup/restore and full backup options for database and media files.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section id="download" class="final reveal">
+      <div class="wrap">
+        <div class="cta">
+          <img src="assets/app-icon.png" alt="ByeTunes app icon">
+          <div>
+            <h2>Make Apple Music feel like yours again.</h2>
+            <p>Download the IPA, join Discord for support, or check the repository for releases and source code.</p>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end">
+            <a class="btn primary" href="#">Download IPA</a>
+            <a class="btn" href="https://discord.gg/Sca7uW94z" target="_blank" rel="noreferrer">Discord</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="sticky-download" id="stickyDownload">
     <img src="assets/app-icon.png" alt="">
-    <div>
-      <h2 style="margin:0;font-size:42px;letter-spacing:-.05em">Take control of your music library.</h2>
-      <p style="margin:10px 0 0;color:var(--muted)">Open source, native, and built for people who want full ownership of their Apple Music experience.</p>
-    </div>
-    <a class="btn primary" href="#">Download Now</a>
+    <strong>ByeTunes</strong>
+    <a class="btn primary" href="#download">Download</a>
   </div>
-</section>
 
-<div class="container">
-  <footer>
-    <div>ByeTunes — Native Apple Music injection.</div>
-    <div>Designed to feel simple, fast and genuinely crafted.</div>
+  <footer class="wrap">
+    <div>ByeTunes — native Apple Music injection.</div>
+    <div>Designed by Zephyrax · Developed by EduAlexxis</div>
   </footer>
-</div>
 
-<script>
-const observer = new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    if(entry.isIntersecting) entry.target.classList.add('visible');
-  });
-},{threshold:.12});
-document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
-</script>
+  <script>
+    const reveal = new IntersectionObserver((entries)=>{
+      for(const entry of entries){
+        if(entry.isIntersecting) entry.target.classList.add('visible');
+      }
+    },{threshold:.12});
+    document.querySelectorAll('.reveal').forEach(el=>reveal.observe(el));
+
+    const sticky = document.getElementById('stickyDownload');
+    window.addEventListener('scroll',()=>{
+      sticky.classList.toggle('visible', window.scrollY > 620);
+    },{passive:true});
+  </script>
 </body>
 </html>
